@@ -38,6 +38,7 @@
   "_moduleAliases": {
     "@root": "./",
     "@app": "./",
+    "@specs": "../specs",
     "@routes": "./routes",
     "@middleware": "./middleware",
     "@helpers": "./helpers",

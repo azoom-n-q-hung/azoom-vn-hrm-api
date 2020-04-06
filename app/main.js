@@ -3,10 +3,11 @@ import nnnRouter from 'nnn-router'
 import promiseRouter from 'express-promise-router'
 import cors from 'cors'
 import bodyParser from 'body-parser'
+import expressOpenApiMiddleware from 'openapi-express-middleware'
+import swaggerFile from '@specs/openapi.json'
 const firebase = require('firebase')
 
 import statuses from 'statuses'
-// import { errorHandlerMiddleware } from '@middleware/error-handler'
 
 import { authMiddleware } from '@middleware/auth'
 
@@ -45,7 +46,24 @@ app.use(
     next()
   }
 )
+
 app.use(authMiddleware)
+
+app.use(
+  expressOpenApiMiddleware(swaggerFile, app, {
+    enableBodyParser: false,
+    enableValidateRequest: false
+  }),
+  (error, req, res, next) => {
+    if (error) {
+      return res.status(400).json({
+        message: error.message,
+      })
+    }
+    return next()
+  }
+)
+
 app.use(nnnRouter({ routeDir: '/routes', baseRouter: promiseRouter() }))
 
 app.listen(process.env.PORT || 8080, err => {
