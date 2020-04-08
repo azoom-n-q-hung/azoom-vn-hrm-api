@@ -11,7 +11,7 @@ requestBody:
           userId:
             type: string
             description: Input ID
-            example: "azoom0019"
+            example: "AZ-19"
         required:
           - userId
 responses:
