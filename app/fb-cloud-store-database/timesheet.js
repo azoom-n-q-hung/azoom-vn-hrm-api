@@ -20,47 +20,39 @@ export const invaildTimesheet = data => {
   return true
 }
 
-export const setTimesheetId = tmsDate => {
-  return date.format(new Date(tmsDate), 'YYYYMMDD')
+export const setTimesheetId = (userId, time) => {
+  return userId + '_' + date.format(time, 'YYYYMMDD')
 }
 
 export const saveTimesheet = async timesheetReq => {
-  timesheetReq.id = setTimesheetId(timesheetReq.checkedDate)
-  await timesheetCollection()
-    .doc(timesheetReq.userId)
-    .collection(timesheetReq.id)
-    .doc(timesheetReq.id)
-    .set(timesheetReq)
-  return timesheetReq
+  try {
+    const timesheetId = timesheetReq.id = setTimesheetId(timesheetReq.userId, new Date())
+    await timesheetCollection()
+      .doc(timesheetId)
+      .set(timesheetReq)
+
+    return true
+  } catch(error) {
+    throw new Error("Error when save to firebase")
+  }
 }
 
 export const updateTimesheet = async timesheetReq => {
-  await timesheetCollection()
-    .doc(timesheetReq.userId)
-    .collection(timesheetReq.id)
-    .doc(timesheetReq.id)
-    .update(timesheetReq)
-  return timesheetReq
-}
-
-const checkTimesheetdoc = async userId => {
   try {
-    const query = await timesheetCollection().get()
-    return query.docs.find(doc => (doc.id = setTimesheetId(userId)))
-      ? true
-      : false
-  } catch {
-    return ''
+    const timesheetId = timesheetReq.id = setTimesheetId(timesheetReq.userId, new Date())
+    await timesheetCollection()
+      .doc(timesheetId)
+      .update(timesheetReq)
+
+    return true
+  } catch(error) { 
+    throw new Error("Error when save to firebase")
   }
 }
 
 export const getTimesheetUserdate = async (userId, tmsDate) => {
-  if (!checkTimesheetdoc(userId)) {
-    return ''
-  }
-  const queryData = await timesheetCollection()
-    .doc(userId)
-    .collection(setTimesheetId(tmsDate))
-    .get()
-  return queryData.empty ? '' : queryData.docs[0].data()
+  const timesheetId = setTimesheetId(userId, tmsDate)
+  const docsToday = await timesheetCollection().where('id', '==', timesheetId).get()
+
+  return  docsToday.docs.length ? docsToday.docs.pop().data() : null
 }

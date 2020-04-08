@@ -39,11 +39,11 @@
     "@root": "./",
     "@app": "./",
     "@routes": "./routes",
+    "@constants": "./constants",
     "@middleware": "./middleware",
     "@helpers": "./helpers",
     "@util": "./util",
-    "@cloudStoreDatabase": "fb-cloud-store-database",
-    "@constants": "./constants"
+    "@cloudStoreDatabase": "fb-cloud-store-database"
   },
   "engines": {
     "node": "10"
