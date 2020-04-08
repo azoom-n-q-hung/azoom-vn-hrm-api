@@ -1,8 +1,19 @@
 operationId: timesheets.checkin
 tags:
-  - timesheets
+  - Timesheets
 summary: POST  /timesheets/checkin/
 description: Checkin for time start working.
+requestBody:
+  content:
+    application/json:
+      schema:
+        properties:
+          userId:
+            type: string
+            description: Input ID
+            example: "azoom0019"
+        required:
+          - userId
 responses:
   200:
     description: Success
@@ -14,7 +25,7 @@ responses:
             message:
               type: string
               description: Notification about checkin.
-              example: Checkin successfully.
+              example: Checkin successfully. || You checked at 7:45.
   400:
     $ref: "#/components/responses/400"
   401:
