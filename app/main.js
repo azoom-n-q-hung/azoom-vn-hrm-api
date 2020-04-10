@@ -4,7 +4,7 @@ import promiseRouter from 'express-promise-router'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import expressOpenApiMiddleware from 'openapi-express-middleware'
-import swaggerFile from '@specs/openapi.json'
+import swaggerFile from './openapi.json'
 const firebase = require('firebase')
 
 import statuses from 'statuses'
@@ -64,7 +64,13 @@ app.use(
   }
 )
 
-app.use(nnnRouter({ routeDir: '/routes', baseRouter: promiseRouter() }))
+app.use(
+  nnnRouter({ routeDir: '/routes', baseRouter: promiseRouter() }),
+  (error, req, res, next) => {
+    console.error(error)
+    return res.sendStatus(500)
+  }
+)
 
 app.listen(process.env.PORT || 8080, err => {
   if (err) {
