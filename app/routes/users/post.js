@@ -1,25 +1,35 @@
-import {
-  user as userReq,
-  saveUser,
-  isValidUser
-} from '@cloudStoreDatabase/user'
+import _ from 'lodash/fp'
+import bcrypt from 'bcrypt'
+import { userCollection } from '@root/database'
+import getRole from '@helpers/users/getRole.js'
 
-import { isAdmin, isEditor } from '@helpers/check-rule'
+export default async (req, res) => {
+  const { userId } = req.body
+  const { user } = req.body
 
-const _ = require('lodash')
+  const role = await getRole(userId)
+  if (role !== 'admin' && role !== 'editor') return res.sendStatus(403)
 
-module.exports = async (req, res) => {
-  if (
-    isAdmin(req.user.positionPermissionId) ||
-    isEditor(req.user.positionPermissionId)
-  ) {
-    const data = _.defaultsDeep(req.body, userReq)
-    if (await isValidUser(data.id, data.email)) {
-      saveUser(data)
-      return res.send(data)
-    }
-    return res.sendStatus(400)
+  const defaultUser = {
+    id: '',
+    userName: '',
+    fullName: '',
+    email: '',
+    password: '',
+    birthDate: '',
+    address: '',
+    tel: '',
+    zipCode: '',
+    totalPaidLeaveDate: 0,
+    contractType: 0,
+    position: 'Dev',
+    positionPermissionId: 1,
+    isActive: true,
+    created: new Date(),
+    updated: ''
   }
+  const newUser = { ...defaultUser, ...user, password: bcrypt.hashSync(user.password, 10)}
 
-  return res.sendStatus(403)
+  await userCollection().doc(newUser.id).set(newUser)
+  res.send(user)
 }
