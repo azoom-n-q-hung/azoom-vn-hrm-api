@@ -3,7 +3,7 @@ import { userCollection } from '@root/database'
 import getRole from '@helpers/users/getRole.js'
 
 export default async (req, res) => {
-  let { page = 0, limit = 0 } = req.query
+  let { page = 1, limit = 1 } = req.query
   const { userId } = req.body
 
   const role = await getRole(userId)
