@@ -124,7 +124,7 @@ responses:
               "zipCode": "",
               "totalPaidLeaveDate": 0,
               "contractType": 0,
-              "position": "editor"
+              "position": "editor",
               "positionPermissionId": 1
             }
   400:
