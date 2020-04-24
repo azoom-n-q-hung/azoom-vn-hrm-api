@@ -1,4 +1,3 @@
-import toLower from 'lodash/fp/toLower'
 
 export default (commandText, seperator = '=') => {
   const commandArgs = commandText.match(/\S+/g) || false

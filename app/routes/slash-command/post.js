@@ -4,15 +4,16 @@ import getUserDetail from '@routes/users/_userId/get.js'
 import getUserBySlackId from '@routes/users/_slackId/get.js'
 import checkIn from '@routes/timesheets/checkin/post.js'
 import checkOut from '@routes/timesheets/checkout/post.js'
+import slackApi from '@helpers/slack-api'
+import verifySlackRequest from '@helpers/verify-requests/slack'
 
 exports.post = async (req, res) => {
-  const request = req.body
+  const request = req
   const { user_id } = req.body
   const commandText = req.body.text
-
-  // TODO Remove comment below when pubsub and upcloud deployment will be implemented
-  // if (!verifySlackRequest(request))
-  //   await slackPostMessage(request.body.user_id, 'We are sorry but we are not able to authenticate you.')
+  
+  if (!verifySlackRequest(request))
+    await slackPostMessage(user_id, 'We are sorry but we are not able to authenticate you.')
 
   const user = await execute(getUserBySlackId, { params: { slackId: user_id } } )
   if (!user)
@@ -26,11 +27,10 @@ exports.post = async (req, res) => {
       return `
         -------------------------------------------------------------------------
          R \`/hrm\` → Show help
-         R \`/hrm users:list\` → Get all user
-         R \`/hrm users:profile\` → Get an user detail
-         R \`/hrm checkin\` → Check in
-         R \`/hrm checkout\` → Check out
-         -------------------------------------------------------------------------
+         R \`/hrm users:list userId={userId}\` → Get all user
+         W \`/hrm checkin\` → Check in
+         W \`/hrm checkout\` → Check out
+        -------------------------------------------------------------------------
       `
     },
     'users:profile': async ({ params }) => {
@@ -66,10 +66,24 @@ exports.post = async (req, res) => {
     'application-leaves:delete': async ({ user, params }) => {},
   }
 
-  // TODO Send response to Slack via postMessage or response_url in requestBody
-  const result = await slashCommands[`${resource}:${action}`]({user, action, params})
+  await slackApi.post('/chat.postMessage', {
+    body: {
+      channel: user.slackId,
+      text: await slashCommands[`${resource}:${action}`]({user, action, params})
+    }
+  })
 
-  return res.status(200).send(result)
+  return res.sendStatus(200)
+}
+
+const slackPostMessage = async (channelId, message) => {
+  await slackApi.post('/chat.postMessage', {
+    body: {
+      channel: channelId,
+      text: message,
+      as_user: true
+    }
+  })
 }
 
 const getSlashCommandAction = commandText => {
