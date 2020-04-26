@@ -18,7 +18,7 @@ requestBody:
               id:
                 type: string
                 description: Input ID
-                example: "azoom0019"
+                example: "AZ-20"
               userName:
                 type: string
                 description: Input userName
