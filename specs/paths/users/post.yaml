@@ -112,7 +112,7 @@ responses:
               type: integer
           example:
             {
-              "id": "azoom0019",
+              "id": "AZ-20",
               "userName": "azoomvn",
               "fullName": "nguyen van A",
               "email": "v.t@azoom.jp",
