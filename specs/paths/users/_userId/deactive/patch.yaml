@@ -6,7 +6,7 @@ parameters:
   - name: userId
     in: path
     description: User ID
-    example: azoom0019
+    example: AZ-20
     schema:
       type: string
 requestBody:
