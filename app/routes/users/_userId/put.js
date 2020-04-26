@@ -13,9 +13,9 @@ export default async (req, res) => {
   if (role !== 'admin' && role !== 'editor') return res.sendStatus(403)
 
   const existUser = await execute(getUser, { params: { userId } })
+  // TODO: Đợi Tuấn Anh fix hàm execute rồi sửa tiếp
   if (typeof existUser !== 'object') return res.sendStatus(404)
 
   await userCollection().doc(userId).update(user)
   return res.send(user)
 }
-
