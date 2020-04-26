@@ -4,8 +4,7 @@ import { userCollection } from '@root/database'
 import getRole from '@helpers/users/getRole.js'
 
 export default async (req, res) => {
-  const { userId } = req.body
-  const { user } = req.body
+  const { userId, user } = req.body
 
   const role = await getRole(userId)
   if (role !== 'admin' && role !== 'editor') return res.sendStatus(403)
