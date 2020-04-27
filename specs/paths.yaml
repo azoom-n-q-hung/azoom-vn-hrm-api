@@ -31,6 +31,12 @@
     $ref: paths/users/post.yaml
   get:
     $ref: paths/users/get.yaml
+/users/{userId}/permission/:
+  patch:
+    $ref: paths/users/_userId/permission/patch.yaml
+/users/{userId}/deactive/:
+  patch:
+    $ref: paths/users/_userId/deactive/patch.yaml
 /users/{userId}/:
   put:
     $ref: paths/users/_userId/put.yaml
