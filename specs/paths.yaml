@@ -12,6 +12,8 @@
 /applications/timesheets/{timesheetAppId}/:
   patch:
     $ref: paths/applications/timesheets/_timesheetAppId/patch.yaml
+  delete:
+    $ref: paths/applications/timesheets/_timesheetAppId/delete.yaml
 /applications/leaves/:
   post:
     $ref: paths/applications/leaves/post.yaml
