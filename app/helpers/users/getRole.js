@@ -3,14 +3,14 @@ import { execute } from '@root/util.js'
 
 export default async function (userId) {
   const user = await execute(getUser, { params: { userId } })
-  if (!user) return ''
-
+  if (user.status === 404 || !user.body) return ''
+  
   return (
     {
       [process.env.POSITION_ADMIN]: 'admin',
       [process.env.POSITION_EDITOR]: 'editor',
       [process.env.POSITION_PROJECTMANAGER]: 'project manager',
       [process.env.POSITION_USER]: 'user',
-    }[user.positionPermissionId] || ''
+    }[user.body.positionPermissionId] || ''
   )
 }

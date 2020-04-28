@@ -1,53 +1,47 @@
-import { isProjectManager, isAdmin, isEditor } from '@helpers/check-rule'
-import getProject from '@routes/projects/get'
+import { timesheetApplicationCollection } from '@root/database'
+import getRole from '@helpers/users/getRole.js'
+import getUserIdsByManagerId from '@helpers/project/getUserIdsByManagerId.js'
 
-module.exports = async (req, res) => {
-  const pageNumber = parseInt(req.query.pageNumber) || 0
-  const count = parseInt(req.query.count) || ''
+export default async (req, res) => {
+  let { page = 1, limit = 15 } = req.query
+  const userId = req.user.id
+ 
+  // TODO: page, limit must be greater than 0  (handle by OpenAPI)
+  // TODO: remove 2 line parser below when openAPI is applied
+  page = parseInt(page)
+  limit = parseInt(limit)
+  
+  const role = await getRole(userId)
+  if (!role) return res.sendStatus(403)
+  
+  const userIds = role === "project manager" ? await getUserIdsByManagerId(userId) : []
+  const totalIgnoreApp = (page - 1) * limit
+  let query = timesheetApplicationCollection().where('isActive', '==', 1)
 
-  if (isAdmin(req.user.positionPermissionId) || isEditor(req.user.positionPermissionId)) {
-    return res.send(await getAllTsAppUserList(pageNumber, count, []))
+  if (role === 'project manager') {
+    query = query.where('userId', 'in', userIds)
+  } else if (role === 'user') {
+    query = query.where('userId', '==', userId)
   }
-  if (isProjectManager(req.user.positionPermissionId)) {
-    const projectlist = await execute(getProject, { query: { managerId: req.user.id } })
-    const memberList = projectlist.reduce((members, project) => {
+
+  const allTimesheetApps = await query.get()
+  let timesheetApps
+  if (totalIgnoreApp === 0) {
+    timesheetApps = await query.orderBy('created').limit(limit).get()
+  } else {
+    const lastIgnoreApp = allTimesheetApps.docs[totalIgnoreApp - 1].data()
+    timesheetApps = await query.orderBy('created').startAfter(lastIgnoreApp.created).limit(limit).get()
+  }
+
+  return res.send({
+    count: allTimesheetApps.size,
+    timesheetApplications: timesheetApps.docs.map(appSnapshot => {
+      const app = appSnapshot.data()
       return {
-        ...members,
-        ...project.members.filter((member) => member.isActive),
+        ...app,
+        created: app.created.toDate(),
+        updated: app.updated ? app.updated.toDate() : undefined
       }
-    }, [])
-
-    return res.send(
-      await getAllTsAppUserList(
-        pageNumber,
-        count,
-        memberList.map((item) => item.id)
-      )
-    )
-  }
-  return res.send(await getAllTsAppUserList(pageNumber, count, [req.user.id]))
-}
-
-export const getAllTsAppUserList = async (page, number, userIdList) => {
-  const result = { count: 0, data: [] }
-  let query = await timesheetAppCollection().orderBy('created', 'desc')
-  if (userIdList && userIdList.length) {
-    query = query.where('userId', 'in', userList)
-  }
-  const datall = await query.get()
-  result.count = datall.empty ? 0 : await datall.docs.length
-  if (!page) {
-    result.data = datall.empty ? '' : await datall.docs.map((doc) => doc.data())
-    return result
-  }
-  if (page && number && page * number - 1 <= result.count) {
-    const queryData = await query
-      .startAt(await datall.docs[page - 1 ? (page - 1) * number : page - 1].data().created)
-      .limit(number)
-      .get()
-    result.data = queryData.empty ? [] : await queryData.docs.map((doc) => doc.data())
-    return result
-  }
-
-  return result
+    })
+  })
 }

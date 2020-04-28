@@ -8,11 +8,13 @@ parameters:
     description: Page number
     schema:
       type: integer
+      minimum: 1
   - name: limit
     in: query
     description: Limit number
     schema:
-      type: string
+      type: integer
+      minimum: 1
 responses:
   200:
     description: Success
@@ -23,13 +25,14 @@ responses:
           properties:
             count:
               type: integer
-              description: Total account
-            data:
+              description: Total applications
+            timesheetApplications:
               type: array
+              description: Applications
           example:
             {
               "count": 5,
-              "data":
+              "timesheetApplications":
                 [
                   {
                     "approvalUserId": "",
