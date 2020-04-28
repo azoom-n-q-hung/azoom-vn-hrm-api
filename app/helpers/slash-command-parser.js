@@ -40,7 +40,9 @@ export default (commandText, seperator = '=') => {
       'leaveType': 'leaveType',
       'lt': 'leaveType',
       'leavesAppId': 'leavesAppId',
-      'alid': 'leavesAppId'
+      'alid': 'leavesAppId',
+      'page': 'page',
+      'limit': 'limit'
     }[generalKey]
     return value ? { ...formatedArgs, [key]: value } : formatedArgs
   }, {})

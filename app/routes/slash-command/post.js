@@ -2,6 +2,9 @@ import commandParser from '@helpers/slash-command-parser'
 import { execute } from '@root/util.js'
 import getUserDetail from '@routes/users/_userId/get.js'
 import getUserBySlackId from '@routes/users/_slackId/get.js'
+import getUsers from '@routes/users/get.js'
+import getMembers from '@routes/projects/_projectId/members/get.js'
+import approvalTimesheetApp from '@routes/applications/timesheets/_timesheetAppId/patch.js'
 import checkIn from '@routes/timesheets/checkin/post.js'
 import checkOut from '@routes/timesheets/checkout/post.js'
 import slackApi from '@helpers/slack-api'
@@ -15,7 +18,8 @@ exports.post = async (req, res) => {
   if (!verifySlackRequest(request))
     await slackPostMessage(user_id, 'We are sorry but we are not able to authenticate you.')
 
-  const user = await execute(getUserBySlackId, { params: { slackId: user_id } } )
+  const userResponse = await execute(getUserBySlackId, { params: { slackId: user_id } } )
+  const user = userResponse.body
   if (!user)
     return await slackPostMessage(userId, 
       `> Sorry, You did not register account before
@@ -27,21 +31,45 @@ exports.post = async (req, res) => {
       return `
         -------------------------------------------------------------------------
          R \`/hrm\` → Show help
-         R \`/hrm users:list userId={userId}\` → Get all user
-         W \`/hrm checkin\` → Check in
-         W \`/hrm checkout\` → Check out
+         R \`/hrm users:profile userId={userId}\` → Get an user
+         R \`/hrm users:list \` → Get all user
+         R \`/hrm users \` → Get your info
+        W \`/hrm users:create username=azoom-19 password=123456 email=azoom@gmail.com\` → Create an user
+        W \`/hrm users:update userId=AZ-19 username=azoom-19 password=123456 email=azoom@gmail.com\` → Update an user
+        W \`/hrm users:deactive userId=azoom0019\` → Deactive an user
+         R \`/hrm project:get-member projectId=project-005\` → Get all member in project
+         R \`/hrm applications-timesheets:approval timesheetAppId=tsa-001 status=approve\` → Approve or reject an timesheet application
+        W \`/hrm checkin\` → Check in
+        W \`/hrm checkout\` → Check out
         -------------------------------------------------------------------------
       `
     },
     'users:profile': async ({ params }) => {
       return execute(getUserDetail, { params: { userId: params.userId } } )
     },
-
-    'users:list': async ({ user }) => {},
-    'users:create': async ({ user, params }) => {},
+    'users:list': async ({ user, params }) => {
+      return execute(getUsers, { query: params, body: { user } } )
+    },
+    'users:': async ({ user }) => {
+      return execute(getUserDetail, { params: { userId: user.id } } )
+    },
+    'users:create': async ({ user, params }) => {
+      //TODO waiting for refactor Create User API
+    },
+    'users:update': async ({ user, params }) => {
+      //TODO waiting for refactor Update User API
+    },
+    'users:deactive': async ({ user, params }) => {
+      //TODO waiting for refactor Deactive User API
+    },
+    'projects:get-member': async ({ params }) => {
+      return execute(getMembers, { params: { projectId: params.projectId } } )
+    },
+    'applications-timesheets:approval': async ({ user, params }) => {
+      //TODO need to take a look when approve/reject API be refactor
+      return execute(getMembers, { params: { timesheetAppId: params.timesheetAppId }, body: { user }, query: { isApproved: params.status === "approve" } } )
+    },
     'users:permission': async ({ user, params }) => {},
-    'users:deactive': async ({ user, params }) => {},
-    'users:update': async ({ user, params }) => {},
     'permission:list': async ({ user, params }) => {},
     'projects:list': async ({ user, params }) => {},
     'projects:create': async ({ user, params }) => {},
@@ -66,10 +94,13 @@ exports.post = async (req, res) => {
     'application-leaves:delete': async ({ user, params }) => {},
   }
 
+  const executeResponse = await slashCommands[`${resource}:${action}`]({user, action, params})
+  
+  
   await slackApi.post('/chat.postMessage', {
     body: {
       channel: user.slackId,
-      text: await slashCommands[`${resource}:${action}`]({user, action, params})
+      text: executeResponse.body || executeResponse
     }
   })
 
@@ -130,6 +161,8 @@ const getSlashCommandAction = commandText => {
     'update': 'update',
     'p': 'profile',
     'profile': 'profile',
+    'gm': 'get-member',
+    'get-member': 'get-member',
     'am': 'add-member',
     'add-member': 'add-member',
     'um': 'update-member',
