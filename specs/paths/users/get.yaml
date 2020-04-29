@@ -15,17 +15,6 @@ parameters:
     schema:
       type: integer
       minimum: 1
-requestBody:
-  content:
-    application/json:
-      schema:
-        properties:
-          userId:
-            type: string
-            description: ID of user who want to get list of users
-            example: "AZ-19"
-        required:
-          - userId
 responses:
   200:
     description: Success
