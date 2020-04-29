@@ -15,6 +15,7 @@ export default (commandText, seperator = '=') => {
       'pid': 'permissionId',
       'userId': 'userId',
       'uid': 'userId',
+      'id': 'id',
       'projectId': 'projectId',
       'pjid': 'projectId',
       'projectName': 'projectName',

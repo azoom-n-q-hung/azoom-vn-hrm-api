@@ -3,6 +3,9 @@ import { execute } from '@root/util.js'
 import getUserDetail from '@routes/users/_userId/get.js'
 import getUserBySlackId from '@routes/users/_slackId/get.js'
 import getUsers from '@routes/users/get.js'
+import createUser from '@routes/users/post.js'
+import updateUser from '@routes/users/_userId/put.js'
+import deactiveUser from '@routes/users/_userId/deactive/patch.js'
 import getMembers from '@routes/projects/_projectId/members/get.js'
 import approvalTimesheetApp from '@routes/applications/timesheets/_timesheetAppId/patch.js'
 import checkIn from '@routes/timesheets/checkin/post.js'
@@ -34,9 +37,9 @@ exports.post = async (req, res) => {
          R \`/hrm users:profile userId={userId}\` → Get an user
          R \`/hrm users:list \` → Get all user
          R \`/hrm users \` → Get your info
-        W \`/hrm users:create username=azoom-19 password=123456 email=azoom@gmail.com\` → Create an user
-        W \`/hrm users:update userId=AZ-19 username=azoom-19 password=123456 email=azoom@gmail.com\` → Update an user
-        W \`/hrm users:deactive userId=azoom0019\` → Deactive an user
+        W \`/hrm users:create id=azoom-19 username=azoom-19 password=123456 email=azoom@gmail.com\` → Create an user
+        W \`/hrm users:update id=azoom-19 username=azoom-19 password=123456 email=azoom@gmail.com\` → Update an user
+        W \`/hrm users:deactive id=azoom-19\` → Deactive an user
          R \`/hrm project:get-member projectId=project-005\` → Get all member in project
          R \`/hrm applications-timesheets:approval timesheetAppId=tsa-001 status=approve\` → Approve or reject an timesheet application
         W \`/hrm checkin\` → Check in
@@ -54,20 +57,20 @@ exports.post = async (req, res) => {
       return execute(getUserDetail, { params: { userId: user.id } } )
     },
     'users:create': async ({ user, params }) => {
-      //TODO waiting for refactor Create User API
+      return execute(createUser, { body: params, user } )
     },
     'users:update': async ({ user, params }) => {
-      //TODO waiting for refactor Update User API
+      return execute(updateUser, { body: params, user, params: { userId: params.id } } )
     },
     'users:deactive': async ({ user, params }) => {
-      //TODO waiting for refactor Deactive User API
+      return execute(deactiveUser, { user, params: { userId: params.id } } )
     },
     'projects:get-member': async ({ params }) => {
       return execute(getMembers, { params: { projectId: params.projectId } } )
     },
     'applications-timesheets:approval': async ({ user, params }) => {
-      //TODO need to take a look when approve/reject API be refactor
-      return execute(getMembers, { params: { timesheetAppId: params.timesheetAppId }, body: { user }, query: { isApproved: params.status === "approve" } } )
+      //TODO need to take a look when API be refactor
+      return execute(approvalTimesheetApp, { params: { timesheetAppId: params.timesheetAppId }, user, query: { isApproved: params.status === "approve" } } )
     },
     'users:permission': async ({ user, params }) => {},
     'permission:list': async ({ user, params }) => {},
@@ -85,7 +88,6 @@ exports.post = async (req, res) => {
     'timesheets': async ({ user, params }) => {},
     'applications-timesheets:create': async ({ user, params }) => {},
     'applications-timesheets:list': async ({ user, params }) => {},
-    'applications-timesheets:approval': async ({ user, params }) => {},
     'applications-timesheets:remove': async ({ user, params }) => {},
     'applications-timesheets:all': async ({ user, params }) => {},
     'application-leaves:create': async ({ user, params }) => {},
@@ -95,7 +97,6 @@ exports.post = async (req, res) => {
   }
 
   const executeResponse = await slashCommands[`${resource}:${action}`]({user, action, params})
-  
   
   await slackApi.post('/chat.postMessage', {
     body: {
