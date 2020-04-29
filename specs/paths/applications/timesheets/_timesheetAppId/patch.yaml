@@ -16,17 +16,6 @@ parameters:
     default: flase
     schema:
       type: boolean
-requestBody:
-  content:
-    application/json:
-      schema:
-        properties:
-          userId:
-            type: string
-            description: Id of user who want to approve this application
-            example: AZ-19
-        required:
-          - userId
 responses:
   200:
     description: Success

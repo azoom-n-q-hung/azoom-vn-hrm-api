@@ -8,7 +8,7 @@ import firebase from 'firebase'
 
 export default async function(req, res) {
   const { timesheetAppId } = req.params
-  const { userId } = req.body
+  const userId = req.user.id
   const { isApproved = false } = req.query
   const exitTimesheetApp = await execute(getExistTimesheetApp, { params: { timesheetAppId } } )
 
