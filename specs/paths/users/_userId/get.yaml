@@ -1,12 +1,11 @@
 operationId: users.getDetail
 tags:
   - Users
-summary: GET /users/{userId}/
-description: Updated role for user
+summary: Get info of an User
 parameters:
-  - userId: page
+  - name: userId
     in: path
-    description: User ID
+    description: Id of user who you want to get info
     example: azoom0019
     schema:
       type: string
@@ -25,8 +24,6 @@ responses:
             fullName:
               type: string
             email:
-              type: string
-            password:
               type: string
             birthDate:
               type: string
@@ -56,7 +53,6 @@ responses:
               "userName": "azoomvn",
               "fullName": "nguyen van A",
               "email": "v.t@azoom.jp",
-              "password": "$2b$10$baCkjc4F8fXRmhR6Qqlbb.FuR.baC1H4BtEKs59BFexToO0nF9SVC",
               "birthDate": "1996/05/4",
               "address": "hn-vn",
               "tel": "096985478",
