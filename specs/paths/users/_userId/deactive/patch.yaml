@@ -9,17 +9,6 @@ parameters:
     example: AZ-20
     schema:
       type: string
-requestBody:
-  content:
-    application/json:
-      schema:
-        properties:
-          userId:
-            type: string
-            description: ID of user who want to deactive
-            example: "AZ-19"
-        required:
-          - userId
 responses:
   200:
     description: Success
