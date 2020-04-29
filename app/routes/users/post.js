@@ -6,8 +6,8 @@ import getUserByEmail from '@routes/users/_email/get'
 import getUserById from '@routes/users/_userId/get'
 
 export default async (req, res) => {
-  const { userId, user } = req.body
-
+  const user = req.body
+  const userId = req.user.id
   const role = await getRole(userId)
   if (role !== 'admin' && role !== 'editor') return res.sendStatus(403)
 

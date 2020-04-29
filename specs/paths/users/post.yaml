@@ -1,83 +1,71 @@
 operationId: users.create
 tags:
   - Users
-summary: POST /users/
-description: Create new account to employee.
+summary: Create an new user
 requestBody:
   content:
     application/json:
       schema:
         properties:
-          userId: 
+          id:
             type: string
-            description: Id of user who want to create new user
-            example: "AZ-19"
-          user:
-            type: object
-            description: Object user will be created
-            properties:
-              id:
-                type: string
-                description: Input ID
-                example: "AZ-20"
-              userName:
-                type: string
-                description: Input userName
-                example: "azoomvn"
-              fullName:
-                type: string
-                description: Input fullName.
-                example: "nguyen van A"
-              email:
-                type: string
-                description: Input email of company.
-                example: "v.t@azoom.jp"
-              password:
-                type: string
-                format: password
-                description: Input password.
-                example: "fgh23456@"
-              dateOfBirth:
-                type: string
-                format: date
-                description: Input dateOfBirth.
-                example: "1996/05/4"
-              address:
-                type: string
-                description: Input address.
-                example: "hn-vn"
-              tel:
-                type: string
-                description: Input telephone.
-                example: "096985478"
-              zipcode:
-                type: string
-                description: Input zipcode.
-                example: "10000"
-              position:
-                type: string
-                description: Input zipcode.
-                example: "editor"
-              positionPermissionId:
-                type: number
-                description: Input positionPermission.
-                example: 1
-              contractTypeId:
-                type: integer
-                description: Input contract type ID
-                example: 0
-            required:
-              - id
-              - userName
-              - fullName
-              - email
-              - password
-              - position
-              - positionPermissionId
-              - contractTypeId
+            description: Input ID
+            example: "AZ-20"
+          userName:
+            type: string
+            description: Input userName
+            example: "azoomvn"
+          fullName:
+            type: string
+            description: Input fullName.
+            example: "nguyen van A"
+          email:
+            type: string
+            description: Input email of company.
+            example: "v.t@azoom.jp"
+          password:
+            type: string
+            format: password
+            description: Input password.
+            example: "fgh23456@"
+          dateOfBirth:
+            type: string
+            format: date
+            description: Input dateOfBirth.
+            example: "1996/05/4"
+          address:
+            type: string
+            description: Input address.
+            example: "hn-vn"
+          tel:
+            type: string
+            description: Input telephone.
+            example: "096985478"
+          zipcode:
+            type: string
+            description: Input zipcode.
+            example: "10000"
+          position:
+            type: string
+            description: Input zipcode.
+            example: "editor"
+          positionPermissionId:
+            type: number
+            description: Input positionPermission.
+            example: 1
+          contractTypeId:
+            type: integer
+            description: Input contract type ID
+            example: 0
         required:
-          - userId
-          - user
+          - id
+          - userName
+          - fullName
+          - email
+          - password
+          - position
+          - positionPermissionId
+          - contractTypeId
 responses:
   200:
     description: Success
