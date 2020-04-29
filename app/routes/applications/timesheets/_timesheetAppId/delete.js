@@ -7,16 +7,16 @@ import getRole from '@helpers/users/getRole'
 export default async (req, res) => {
   const userId = req.user.id
   const { timesheetAppId } = req.params
-
   const role = await getRole(userId)
-  const exitTimesheetApp = await execute(getExistTimesheetApp, { params: { timesheetAppId } } )
+  const responseTimesheetApp = await execute(getExistTimesheetApp, { params: { timesheetAppId } } )
+  const exitTimesheetApp = responseTimesheetApp.body
 
+  if (responseTimesheetApp.status === 404 || !responseTimesheetApp.body ) return res.sendStatus(404)
   if (exitTimesheetApp.status !== status.inPending || exitTimesheetApp.approvalUsers.length !== 0) {
     return res.status(400).send({ message: 'You cannot delete the application which was approved/rejected.' })
   }
-  
-  if (role === 'admin' || exitTimesheetApp.userId === userId) {
-    await timesheetApplicationCollection().doc(timesheetAppId).update({ isActive: 0 })
-    return res.sendStatus(200)
-  } else return res.sendStatus(403)
+  if (role !== 'admin' && exitTimesheetApp.userId !== userId) return res.sendStatus(403)
+
+  await timesheetApplicationCollection().doc(timesheetAppId).update({ isActive: 0 })
+  return res.send({ message: `Timesheet application ${timesheetAppId} was deleted` })
 }

@@ -20,7 +20,7 @@ responses:
           properties:
             message:
               type: string
-          example: { "message": "OK" }
+          example: { "message": "Timesheet application ATS0019 was deleted" }
   400:
     $ref: "#/components/responses/400"
   401:
