@@ -5,7 +5,7 @@ summary: Updated info of an user
 parameters:
   - name: userId
     in: path
-    description: User ID
+    description: Id of user will be update
     example: azoom0019
     schema:
       type: string
@@ -14,54 +14,43 @@ requestBody:
     application/json:
       schema:
         properties:
-          userId:
+          userName:
             type: string
-            description: Id of user who want to update info
-            example: "AZ-19"
-          user:
-            type: object
-            description: Object user will be updated
-            properties:
-              userName:
-                type: string
-                description: Input userName
-                example: "azoomvn"
-              fullName:
-                type: string
-                description: Input fullName.
-                example: "nguyen van A"
-              email:
-                type: string
-                description: Input email of company.
-                example: "v.t@azoom.jp"
-              dateOfBirth:
-                type: string
-                format: date
-                description: Input dateOfBirth.
-                example: "1996/05/4"
-              address:
-                type: string
-                description: Input address.
-                example: "hn-vn"
-              tel:
-                type: string
-                description: Input telephone.
-                example: "096985478"
-              zipcode:
-                type: string
-                description: Input zipcode.
-                example: "10000"
-              position:
-                type: string
-                description: Input position.
-                example: Dev
-              contractTypeId:
-                type: integer
-                description: Input contract type ID
-                example: 0
-        required:
-          - userId
-          - user
+            description: Input userName
+            example: "azoomvn"
+          fullName:
+            type: string
+            description: Input fullName.
+            example: "nguyen van A"
+          email:
+            type: string
+            description: Input email of company.
+            example: "v.t@azoom.jp"
+          dateOfBirth:
+            type: string
+            format: date
+            description: Input dateOfBirth.
+            example: "1996/05/4"
+          address:
+            type: string
+            description: Input address.
+            example: "hn-vn"
+          tel:
+            type: string
+            description: Input telephone.
+            example: "096985478"
+          zipcode:
+            type: string
+            description: Input zipcode.
+            example: "10000"
+          position:
+            type: string
+            description: Input position.
+            example: Dev
+          contractTypeId:
+            type: integer
+            description: Input contract type ID
+            example: 0
 responses:
   200:
     description: Success
