@@ -26,10 +26,16 @@ export default (commandText, seperator = '=') => {
       'mids': 'memberIds',
       'position': 'position',
       'pos': 'position',
+      'time': 'time',
+      't': 'time',
       'startTime': 'startTime',
       'st': 'startTime',
       'endTime': 'endTime',
       'et': 'endTime',
+      'startDate': 'startDate',
+      'sd': 'startDate',
+      'endDate': 'endDate',
+      'ed': 'endDate',
       'date': 'date',
       'd': 'date',
       'reasion': 'reasion',
@@ -40,10 +46,12 @@ export default (commandText, seperator = '=') => {
       'atid': 'timesheetAppId',
       'leaveType': 'leaveType',
       'lt': 'leaveType',
-      'leavesAppId': 'leavesAppId',
-      'alid': 'leavesAppId',
+      'leaveAppId': 'leaveAppId',
+      'alid': 'leaveAppId',
       'page': 'page',
-      'limit': 'limit'
+      'limit': 'limit',
+      'positionScore': 'positionScore',
+      'ps': 'positionScore',
     }[generalKey]
     return value ? { ...formatedArgs, [key]: value } : formatedArgs
   }, {})
