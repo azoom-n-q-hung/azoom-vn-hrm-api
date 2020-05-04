@@ -1,0 +1,89 @@
+steps:
+  - id: 'download-build-tools'
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    volumes:
+      - name: 'builder'
+        path: '/tools'
+    args:
+      - '-c'
+      - |
+        curl -L ${_SOPS_DOWNLOAD_LINK} --output /tools/sops --silent && \
+        chmod u+x /tools/sops
+
+  - id: 'decrypt-env'
+    name: 'gcr.io/cloud-builders/docker'
+    waitFor: ['download-build-tools']
+    entrypoint: 'bash'
+    volumes:
+      - name: 'builder'
+        path: '/tools'
+    args:
+      - '-c'
+      - |
+        export PATH=$(env | grep '^PATH' | cut -d '=' -f2):/tools && \
+        sops --output ./app/.env --decrypt ./deployments/${_ENV}/sops.env
+
+  # run build images
+  - id: 'build'
+    name: 'gcr.io/kaniko-project/executor:v0.16.0'
+    args:
+      - --destination=gcr.io/${_PROJECT_ID}/${_IMAGE_NAME}:latest
+      - --dockerfile=${_DOCKER_FILE}
+      - --cache=true
+
+  - id: 'deploy'
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor:
+      - 'build'
+    args:
+      [
+        'run',
+        'deploy',
+        '${_IMAGE_NAME}',
+        '--image',
+        'gcr.io/${_PROJECT_ID}/${_IMAGE_NAME}:latest',
+        '--memory',
+        '1G',
+        '--allow-unauthenticated',
+        '--region',
+        'asia-northeast1',
+        '--platform',
+        'managed',
+        '--timeout',
+        '900'
+      ]
+
+  - id: 'deploy pubsub'
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor:
+      - 'build'
+    args:
+      [
+        'functions',
+        'deploy',
+        '${_PUBSUB_NAME}',
+        '--entry-point',
+        '${_PUBSUB_NAME}',
+        '--env-vars-file',
+        '${_ENV_FUNCTION_PATH}',
+        '--runtime',
+        'nodejs10',
+        '--trigger-topic',
+        '${_PUBSUB_TOPIC}',
+        '--allow-unauthenticated',
+        '--region',
+        'asia-northeast1',
+        '--source',
+        '${_PUBSUB_FUNCTION_PATH}'
+      ]
+substitutions:
+  _SOPS_DOWNLOAD_LINK: https://github.com/mozilla/sops/releases/download/v3.5.0/sops-v3.5.0.linux
+  _ENV: staging
+  _PROJECT_ID: staging-tonkinese
+  _IMAGE_NAME: azoom-vn-hrm-api
+  _PUBSUB_NAME: hrmPubSub
+  _PUBSUB_TOPIC: hrm
+  _PUBSUB_FUNCTION_PATH: pubsub/
+  _DOCKER_FILE: deployments/Dockerfile
+  _ENV_FUNCTION_PATH: pubsub/.env.yaml

@@ -1,4 +1,17 @@
+import bcrypt from 'bcrypt'
+import firebase from 'firebase'
+import _ from 'lodash/fp'
 import { generateToken } from '@helpers/jwt-helper'
+import { userCollection, userTokenCollection } from '@root/database'
+
+const userToken = {
+  id: '',
+  userId: '',
+  tokenCode: '',
+  isActive: true,
+  created: firebase.firestore.Timestamp.fromDate(new Date()),
+  updated: ''
+}
 
 export default async function (req, res) {
   try {
@@ -23,10 +36,10 @@ export default async function (req, res) {
 const saveToken = async (userId, tokenCode) => {
   const id = userId + Date.now()
   const data = _.defaultsDeep(
-    { id: id, userId: userId, tokenCode: tokenCode },
-    userToken
+    userToken,
+    { id: id, userId: userId, tokenCode: tokenCode }
   )
-  const tokenUser = await tokenUserCollection()
+  const tokenUser = await userTokenCollection()
     .doc(id)
     .set(data)
   return tokenUser

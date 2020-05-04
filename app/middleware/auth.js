@@ -23,7 +23,7 @@ export const authMiddleware = router.use(async (req, res, next) => {
 
 function checkRequestReferer (requestReferer) {
   const isProduction = process.env.NODE_ENV === 'production'
-  const defaultApiRefererWhitelist = [/^(https?:\/\/)?([\w-.]*)\/login/]
+  const defaultApiRefererWhitelist = [/^(https?:\/\/)?([\w-.]*)\/login|pubsub/]
   const apiRefererWhiteList = isProduction
     ? defaultApiRefererWhitelist
     : [...defaultApiRefererWhitelist, /login/]
