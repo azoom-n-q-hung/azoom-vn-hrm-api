@@ -12,9 +12,10 @@ export default async function(req, res) {
   const { timesheetAppId } = req.params
   const userId = req.user.id
   const { isApproved = false } = req.query
-  const exitTimesheetApp = await execute(getExistTimesheetApp, { params: { timesheetAppId } } )
+  const responseTimesheet = await execute(getExistTimesheetApp, { params: { timesheetAppId } } )
 
-  if (!exitTimesheetApp) return res.sendStatus(404)
+  if (responseTimesheet.status === 404 || !responseTimesheet.body) return res.sendStatus(404)
+  const exitTimesheetApp = responseTimesheet.body
   if (exitTimesheetApp.status !== status.inPending) {
     return res.status(400).send({ message: 'This Application has been already approved/rejected.' })
   }
