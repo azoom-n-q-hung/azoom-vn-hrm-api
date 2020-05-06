@@ -5,33 +5,34 @@ import updateTimesheet from '@routes/timesheets/patch.js'
 import { format } from 'date-fns/fp'
 
 export default async (req, res) => {
-  try {
-    const { userId } = req.body
-    const existedTimesheet = await execute(getExistTimesheet, { params: { userId, time: new Date() } })
-    if (!existedTimesheet) {
-      const newTimesheet = {
-        userId,
-        checkedDate: new Date(),
-        startTime: '',
-        endTime: format('HH:mm', new Date()),
-        created: new Date(),
-        updated: '',
-      }
+  const userId = req.user.id
+  const responseTimesheet = await execute(getExistTimesheet, { params: { userId, time: new Date() } })
+  const [existedTimesheet] = responseTimesheet.body
 
-      await execute(saveTimesheet, { body: newTimesheet })
-      return res.send({ message: 'Checkout successfully. But you have not checked in today' })
-    } else {
-      const editProperties = {
-        endTime: format('HH:mm', new Date()),
-        updated: new Date(),
-      }
-      const warningMessage = existedTimesheet.startTime ? '' : ' But you have not checked in today'
-
-      if (await execute(updateTimesheet, { body: editProperties, query: { timesheetAppId: existedTimesheet.id } })) {
-        return res.send({ message: `Checkout successfully.${warningMessage}` })
-      }
+  if (!existedTimesheet) {
+    const newTimesheet = {
+      userId,
+      checkedDate: new Date(),
+      startTime: '',
+      endTime: format('HH:mm', new Date()),
+      created: new Date(),
+      updated: '',
     }
-  } catch (error) {
-    return res.status(500).send({ message: 'Server internal error.' })
+    const saveResult = await execute(saveTimesheet, { body: newTimesheet })
+
+    if (saveResult.status === 200 && saveResult.body) {
+      return res.send({ message: 'Checkout successfully. But you have not checked in today' })
+    } else throw new Error("Internal Server Error")
+  } else {
+    const editProperties = {
+      endTime: format('HH:mm', new Date()),
+      updated: new Date(),
+    }
+    const warningMessage = existedTimesheet.startTime ? '' : ' But you have not checked in today'
+    const updateResult = await execute(updateTimesheet, { body: editProperties, query: { timesheetAppId: existedTimesheet.id } })
+    
+    if (updateResult.status === 200 && updateResult.body) {
+      return res.send({ message: `Checkout successfully.${warningMessage}` })
+    } else throw new Error("Internal Server Error")
   }
 }

@@ -11,7 +11,7 @@ export default async (req, res) => {
       query = query.where('userId', 'in', ids)
     }
     if (time) {
-      query = query.where('checkedDate', '>=', parse(new Date(), 'yyyy-MM-dd'), time)
+      query = query.where('checkedDate', '==', parse(new Date(), 'yyyy-MM-dd'), time)
     } else if (startDate || endDate) {
       if (startDate) {
         query = query.where('checkedDate', '>=', parse(new Date(), 'yyyy-MM-dd', startDate))
