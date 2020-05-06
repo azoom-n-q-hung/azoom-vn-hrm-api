@@ -37,7 +37,7 @@ const getUserByEmailAndPassword = async (email, password) => {
     .where('email', '==', email)
     .get()
   const userDoc = queryData.docs.find(doc =>
-    bcrypt.compare(password, doc.data().password)
+    bcrypt.compareSync(password, doc.data().password)
   )
   return userDoc ? userDoc.data() : ''
 }
