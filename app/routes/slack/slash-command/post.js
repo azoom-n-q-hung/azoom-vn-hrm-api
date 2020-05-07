@@ -68,8 +68,8 @@ export default async (req, res) => {
     'users:list': async (user, { page, limit}) => {
       return execute(getUsers, { query: { page, limit }, user })
     },
-    'users:': async (user, { userId }) => {
-      return execute(getUserDetail, { params: { userId }, user })
+    'users:': async (user) => {
+      return execute(getUserDetail, { params: { userId: user.id }, user })
     },
     'users:create': async (user, params) => {
       return execute(createUser, { body: params, user })
@@ -95,7 +95,7 @@ export default async (req, res) => {
     'application-leaves:delete': async (user, { leaveAppId }) => {
       return execute(deleteLeaveApplication, { params: { leaveAppId }, user })
     },
-    'timesheets': async (user, { userIds, time, startDate, endDate, userId }) => {
+    'timesheets:': async (user, { userIds, time, startDate, endDate, userId }) => {
       return execute(getTimesheets, { params: { userIds: userIds || userId, time, startDate, endDate}, user })
     },
     'application-payment:list': async (user, { page, limit }) => {
