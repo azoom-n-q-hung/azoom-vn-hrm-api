@@ -8,31 +8,32 @@ export default async (req, res) => {
   const userId = req.user.id
   const responseTimesheet = await execute(getExistTimesheet, { params: { userId, time: new Date() } })
   const [existedTimesheet] = responseTimesheet.body
+  const endTime = format('HH:mm', new Date())
+  const warningMessage = existedTimesheet && existedTimesheet.startTime ? '' : ' But you have not checked in today.'
 
-  if (!existedTimesheet) {
-    const newTimesheet = {
-      userId,
-      checkedDate: new Date(),
-      startTime: '',
-      endTime: format('HH:mm', new Date()),
-      created: new Date(),
-      updated: '',
-    }
-    const saveResult = await execute(saveTimesheet, { body: newTimesheet })
+  if (existedTimesheet && existedTimesheet.endTime) return res.send({ message: `You checked out at ${existedTimesheet.endTime}.${warningMessage}` })
 
-    if (saveResult.status === 200 && saveResult.body) {
-      return res.send({ message: 'Checkout successfully. But you have not checked in today' })
-    } else throw new Error("Internal Server Error")
-  } else {
+  if (existedTimesheet && !existedTimesheet.endTime) {
     const editProperties = {
-      endTime: format('HH:mm', new Date()),
+      endTime,
       updated: new Date(),
     }
-    const warningMessage = existedTimesheet.startTime ? '' : ' But you have not checked in today'
     const updateResult = await execute(updateTimesheet, { body: editProperties, query: { timesheetAppId: existedTimesheet.id } })
     
-    if (updateResult.status === 200 && updateResult.body) {
-      return res.send({ message: `Checkout successfully.${warningMessage}` })
-    } else throw new Error("Internal Server Error")
+    if (updateResult.status !== 200) throw new Error("Internal Server Error")
+    return res.send({ message: `Checkout successfully at ${endTime}.${warningMessage}` })
   }
+
+  const newTimesheet = {
+    userId,
+    checkedDate: new Date(),
+    startTime: '',
+    endTime,
+    created: new Date(),
+    updated: '',
+  }
+  const saveResult = await execute(saveTimesheet, { body: newTimesheet })
+
+  if (saveResult.status !== 200) throw new Error("Internal Server Error")
+  return res.send({ message: `Checkout successfully at ${endTime}. But you have not checked in today.` })
 }

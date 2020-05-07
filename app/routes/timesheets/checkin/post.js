@@ -8,32 +8,31 @@ export default async (req, res) => {
   const userId = req.user.id
   const responseTimesheet = await execute(checkExistTimesheet, { params: { userId, time: new Date() } })
   const [checkedInRecord] = responseTimesheet.body
+  const startTime = format('HH:mm', new Date())
 
-  if (!checkedInRecord) {
-    const newTimesheet = {
-      userId,
-      checkedDate: new Date(),
-      startTime: format('HH:mm', new Date()),
-      endTime: '',
-      created: new Date(),
-      updated: '',
-    }
-    const saveResult = await execute(saveTimesheet, { body: newTimesheet })
+  if (checkedInRecord && checkedInRecord.startTime) return res.send({ message: `You checked in at ${checkedInRecord.startTime}.` })
 
-    if (saveResult.status === 200 && saveResult.body) {
-      return res.send({ message: 'Checkin successfully.' })
-    } else throw new Error("Internal Server Error")
-  } else if (!checkedInRecord.startTime) {
+  if (checkedInRecord && !checkedInRecord.startTime) {
     const updateProperties = {
-      startTime: format('HH:mm', new Date()),
+      startTime,
       updated: new Date(),
     }
     const updateResult = await execute(updateTimesheet, { body: updateProperties, query: { timesheetAppId: checkedInRecord.id } })
     
-    if (updateResult.status === 200 && updateResult.body) {
-      return res.send({ message: 'Checkin successfully.' })
-    } else throw new Error("Internal Server Error")
-  } else {
-    return res.send({ message: `You checked in at ${checkedInRecord.startTime}` })
+    if (updateResult.status !== 200) throw new Error("Internal Server Error")
+    return res.send({ message: `Checkin successfully at ${startTime}.` })
   }
+
+  const newTimesheet = {
+    userId,
+    checkedDate: new Date(),
+    startTime,
+    endTime: '',
+    created: new Date(),
+    updated: '',
+  }
+  const saveResult = await execute(saveTimesheet, { body: newTimesheet })
+
+  if (saveResult.status !== 200) throw new Error("Internal Server Error")
+  return res.send({ message: `Checkin successfully at ${startTime}.` })
 }
