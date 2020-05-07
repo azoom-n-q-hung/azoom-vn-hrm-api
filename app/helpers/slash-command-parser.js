@@ -15,6 +15,8 @@ export default (commandText, seperator = '=') => {
       'pid': 'permissionId',
       'userId': 'userId',
       'uid': 'userId',
+      'userIds': 'userIds',
+      'uids': 'userIds',
       'id': 'id',
       'projectId': 'projectId',
       'pjid': 'projectId',
@@ -52,6 +54,8 @@ export default (commandText, seperator = '=') => {
       'limit': 'limit',
       'positionScore': 'positionScore',
       'ps': 'positionScore',
+      'paymentAppId': 'paymentAppId',
+      'apid': 'paymentAppId'
     }[generalKey]
     return value ? { ...formatedArgs, [key]: value } : formatedArgs
   }, {})
