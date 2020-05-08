@@ -38,9 +38,6 @@
 /users/{userId}/permission/:
   patch:
     $ref: paths/users/_userId/permission/patch.yaml
-/users/{userId}/deactive/:
-  patch:
-    $ref: paths/users/_userId/deactive/patch.yaml
 /users/{userId}/:
   put:
     $ref: paths/users/_userId/put.yaml
@@ -48,9 +45,6 @@
     $ref: paths/users/_userId/get.yaml
   delete:
     $ref: paths/users/_userId/delete.yaml
-/users/{userId}/position-permission/:
-  patch:
-    $ref: paths/users/_userId/position-permission/patch.yaml
 /users/paid-leave/one-more-day/:
   patch:
     $ref: paths/users/paid-leave/one-more-day/patch.yaml
