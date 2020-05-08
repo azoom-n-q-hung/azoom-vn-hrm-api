@@ -9,6 +9,7 @@ import deactiveUser from '@routes/users/_userId/delete.js'
 import updatePermissionUser from '@routes/users/_userId/permission/patch.js'
 import getMembers from '@routes/projects/_projectId/members/get.js'
 import addMember from '@routes/projects/_projectId/members/post.js'
+import createTimesheetApp from '@routes/applications/timesheets/post.js'
 import approvalTimesheetApp from '@routes/applications/timesheets/_timesheetAppId/patch.js'
 import deleteTimesheetApp from '@routes/applications/timesheets/_timesheetAppId/delete.js'
 import deleteLeaveApplication from '@routes/applications/leaves/_leaveAppId/delete.js'
@@ -51,6 +52,7 @@ export default async (req, res) => {
         W \`/hrm users:permission id=azoom-19 permissionId=3\` → Change permission of an user
          R \`/hrm project:get-member projectId=project-005\` → Get all member in project
         W \`/hrm projects:add-member projectId=project-005 userId=azoom-19 positionScore=1 startTime=2020-04-06 endTime=2020-04-08\` → Add an member to project
+        W \`/hrm applications-timesheets:create time=2020/05/08 startTime=08:00 endTime=17:00 reason=Hom nay troi dep qua \` → Get list Timesheets Application
          R \`/hrm applications-timesheets:approval timesheetAppId=tsa-001 status=approve\` → Approve or reject an timesheet application
         W \`/hrm application-leave:delete leaveAppId=leaveApp-19\` → Delete leave application
          R \`/hrm application-payment:list page=1 limit=15 \` → Get list Payments Application
@@ -99,7 +101,10 @@ export default async (req, res) => {
       return execute(getTimesheets, { params: { userIds: userIds || userId, time, startDate, endDate}, user })
     },
     'application-payment:list': async (user, { page, limit }) => {
-      return execute(getPaymentsApplication, { query: { page, limit  }, user } )
+      return execute(getPaymentsApplication, { query: { page, limit }, user } )
+    },
+    'applications-timesheets:create': async (user, { date, startTime, endTime, reason}) => {
+      return execute(createTimesheetApp, { body: { requiredDates: date, startTime, endTime, requiredContent: reason }, user } )
     },
     'applications-timesheets:list': async (user, { page, limit }) => {
       return execute(getTimesheetsApplication, { query: { page, limit  }, user } )
@@ -121,7 +126,6 @@ export default async (req, res) => {
     'application-payment:get': async (user, { paymentAppId }) => {
       return execute(getPaymentDetail, { user, query: { paymentAppId } } )
     },
-    'applications-timesheets:create': async ({ user, params }) => {},
     'applications-timesheets:all': async ({ user, params }) => {},
     'application-leaves:create': async ({ user, params }) => {},
     'application-leaves:list': async ({ user, params }) => {},
