@@ -24,8 +24,8 @@ export default (commandText, seperator = '=') => {
       'pjn': 'projectName',
       'managerId': 'managerId',
       'mid': 'managerId',
-      'memberIds': 'memberIds',
-      'mids': 'memberIds',
+      'memberId': 'memberId',
+      'meid': 'memberId',
       'position': 'position',
       'pos': 'position',
       'time': 'time',
@@ -55,7 +55,9 @@ export default (commandText, seperator = '=') => {
       'positionScore': 'positionScore',
       'ps': 'positionScore',
       'paymentAppId': 'paymentAppId',
-      'apid': 'paymentAppId'
+      'apid': 'paymentAppId',
+      'amount': 'amount',
+      'am': 'amount'
     }[generalKey]
     return value ? { ...formatedArgs, [key]: value } : formatedArgs
   }, {})
