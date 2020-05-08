@@ -24,7 +24,6 @@ export default async (req, res) => {
   }
   
   const newPayment = {...defaultPayment, ...payment}
-  console.log(2555, newPayment);
   await paymentCollection().doc(newPayment.id).set(newPayment)
   return res.send(newPayment)
 }
