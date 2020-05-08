@@ -1,8 +1,7 @@
 operationId: timesheetsApplications.create
 tags:
   - Applications
-summary: POST /applications/timesheets/
-description: Create new application about want to update timesheet.
+summary: Create new timesheet application to change check in/out time
 requestBody:
   content:
     application/json:
@@ -11,25 +10,26 @@ requestBody:
           startTime:
             type: string
             format: hh:mm
-            description: Input startTime
+            description: start time you want to change
             example: "08:30"
           endTime:
             type: string
             format: hh:mm
-            description: Input endTime.
+            description: end time you want to change
             example: "17:30"
-          requireDate:
+          requiredDates:
             type: string
-            format: date
+            format: YYYY/MM/DD
             example: 2020/03/28
+            description: the date you want to change check in/out time
           requireContent:
             type: string
-            description: Input content of required.
+            description: Reason you fogot check in/out
             example: "I want to change time working for 2013/03/12"
         required:
           - startTime
           - endTime
-          - requireDate
+          - requiredDates
 responses:
   200:
     description: Success
@@ -42,38 +42,39 @@ responses:
               type: string
             userId:
               type: string
-            approvalUserId:
-              type: string
+            approvalUsers:
+              type: array
             startTime:
               type: string
             endTime:
               type: string
-            requireDate:
+            requiredDates:
               type: string
               format: date
             requiredContent:
               type: string
             isActive:
-              type: boolean
+              type: number
             created:
-              type: string
-              format: date-time
+              type: date
+              format: YYYY-MM-DD HH:mm:ss
             updated:
-              format: date-time
+              type: date
+              format: YYYY-MM-DD HH:mm:ss
           example:
             {
               "startTime": "08:30",
               "endTime": "17:30",
-              "requireDate": "2020/03/30",
-              "requiredContent": "I want to change time working for 2013/03/12",
-              "id": "azoom00920200330150334",
+              "requiredDates": "2020/03/30",
+              "requiredContent": "I want to change time working for 2020/03/30",
+              "id": "timesheetApplication_20200330150334",
               "userId": "azoom009",
-              "approvalUserId": "",
+              "approvalUsers": [],
               "requiredDate": "",
               "timesheetId": "",
               "status": -1,
-              "isActive": true,
-              "created": "2020/03/30 15:34:03",
+              "isActive": 1,
+              "created": "2020-05-08T02:31:19.095Z",
               "updated": "",
             }
   400:

@@ -37,7 +37,7 @@ export const paymentCollection = () => {
 }
 
 export const timesheetApplicationCollection = () => {
-  return fireStore.collection(process.env.DB_TABLE_TIME_SHEET)
+  return fireStore.collection(process.env.DB_TABLE_TIME_SHEET_APPLICATION)
 }
 
 export const notificationCollection = () => {
