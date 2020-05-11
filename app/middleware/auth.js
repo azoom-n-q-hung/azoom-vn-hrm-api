@@ -10,7 +10,7 @@ const accessTokenSecret = process.env.ACCESS_TOKEN_SECRET
 export const authMiddleware = router.use(async (req, res, next) => {
   const tokenFromClient =
     req.body.token || req.query.token || req.headers['x-access-token'] || ''
-  if (checkRequestReferer(req.originalUrl || verifySlackRequest(req))) {
+  if (checkRequestReferer(req.originalUrl) || await verifySlackRequest(req)) {
     return next()
   }
   const resultcheck = await checkRequestApiKey(tokenFromClient)
