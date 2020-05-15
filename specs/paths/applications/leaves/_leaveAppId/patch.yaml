@@ -12,9 +12,9 @@ parameters:
       type: string
   - name: isApproved
     in: query
-    description: true for approve and false for reject
-    example: false
-    default: false
+    description: 1 for approve and 0 for reject
+    example: 0
+    default: 0
     schema:
       type: boolean    
 responses:
@@ -27,7 +27,7 @@ responses:
           properties:
             message:
               type: string
-          example: { "message": "Successfully." }
+          example: { "message": "Rejected successfully." }
   400:
     $ref: "#/components/responses/400"
   401:
