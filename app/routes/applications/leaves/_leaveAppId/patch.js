@@ -11,7 +11,7 @@ import newApprovalUser from '@helpers/users/initNewApprovalUser'
 import calculateApprovalPoints from '@helpers/calculateApprovalPoints'
 import getRole from '@helpers/users/getRole'
 
-module.exports = async (req, res) => {
+export default async (req, res) => {
   const { leaveAppId } = req.params
   const { isApproved = false } = req.query
   const getLeaveAppResponse = await execute(getLeaveApp, {

@@ -90,3 +90,9 @@
 /notifications/{notificationId}/:
   put:
     $ref: paths/notifications/_notificationId/put.yaml
+/slack/notification:
+  post:
+    $ref: paths/slack/notification/post.yaml
+/slack/notification/hrm-api:
+  post:
+    $ref: paths/slack/notification/hrm-api/post.yaml

@@ -1,0 +1,66 @@
+operationId: slack.notification.hrm-api.create
+tags:
+  - Slack
+summary: POST /slack/notification/hrm-api
+description: Use slack bot to send notification to member
+requestBody:
+  content:
+    application/json:
+      schema:
+        properties:
+          payload:
+            type: object
+            description: payload of slack request
+            example:
+              { 
+                type: 'interactive_message',
+                actions:
+                [ { name: 'leave-application', type: 'button', value: 'Approve' } ],
+                callback_id: 'azoom-0005',
+                team: { id: 'T013H5CC9AM', domain: 'azoomhrmslack-aj25513' },
+                channel: { id: 'D012S2GEXQF', name: 'directmessage' },
+                user: { id: 'U0134NM03C3', name: 't.t.anh' },
+                action_ts: '1589189540.998711',
+                message_ts: '1589189538.001100',
+                attachment_id: '1',
+                token: 'XFdnmmIG0fdureNJXHXiXmJG',
+                is_app_unfurl: false,
+                original_message:
+                { bot_id: 'B013KCXBUGH',
+                  type: 'message',
+                  text:
+                    'You have a notice from <https://slack.com/app_redirect?channel=U0134NM03C3|t.t.anh>',
+                  user: 'U0135CV5EDT',
+                  ts: '1589189538.001100',
+                  team: 'T013H5CC9AM',
+                  bot_profile:
+                    { id: 'B013KCXBUGH',
+                      deleted: false,
+                      name: 'Azoom-HRM',
+                      updated: 1588818792,
+                      app_id: 'A0135CTUJDB',
+                      icons: [Object],
+                      team_id: 'T013H5CC9AM' },
+                  attachments: [ [Object] ] },
+                response_url:
+                'https://hooks.slack.com/actions/T013H5CC9AM/1100826850823/pT2gEOtWyKZhWGbTVG4FgDiC',
+                trigger_id:
+                '1115568634770.1119182417361.e1a08d5e85d3a7649026ca089975474b' 
+              }
+
+        required:
+          - payload
+responses:
+  200:
+    description: Success
+    content:
+      application/json:
+        schema:
+          type: string
+          example: "Your approve/reject request was successful"
+  400:
+    $ref: "#/components/responses/400"
+  401:
+    $ref: "#/components/responses/401"
+  500:
+    $ref: "#/components/responses/500"

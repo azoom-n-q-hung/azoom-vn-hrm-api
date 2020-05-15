@@ -1,0 +1,82 @@
+operationId: slack.notification.create
+tags:
+  - Slack
+summary: POST /slack/notification
+description: Use slack bot to send notification to member
+requestBody:
+  content:
+    application/json:
+      schema:
+        properties:
+          receiverIds:
+            type: array
+            description: List slack memberId will receive notification
+          senderId:
+            type: string
+            description: Slack memberId of sender notification
+          title:
+            type: string
+            description: title of notification
+          content:
+            type: string
+            description: content of notification
+          typeId:
+            type: integer
+            description: 1- if notice require receiver approve/reject, 0- if information notice
+          typeNotice:
+            type: string
+            description: Type of notice- leave-application, payment-request or timesheet-application, require typeId=1
+          requestId:
+            type: string
+            description: id of request leave-application or payment-request
+          options:
+            type: array
+            description: option for receiver choose
+            items:
+              type: object
+              properties:
+                typeOption:
+                  type: string
+                  description: type of option for receiver choose
+                value:
+                  type: string
+                  description: value of option- Approve or Reject
+        required:
+          - receiverIds
+          - senderId
+          - title
+          - content
+          - typeId
+        example:
+          {
+            "receiverIds": ["U0134NM03C3"],
+            "senderId": "U0134NM03C3",
+            "title": "Đơn xin nghỉ phép",
+            "content": "Vì lý do cá nhân , em xin nghỉ phép ngày 10/5",
+            "typeId": 1,
+            "typeNotice": "leave-application",
+            "codeNotice": "azoom-001",
+            "options":
+              [
+                { "type": "button", "value": "Approve" },
+                { "type": "button", "value": "Reject" },
+              ],
+          }
+responses:
+  200:
+    description: Success
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Send Notification Successful"
+
+  400:
+    $ref: "#/components/responses/400"
+  401:
+    $ref: "#/components/responses/401"
+  500:
+    $ref: "#/components/responses/500"
